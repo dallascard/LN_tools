@@ -1,0 +1,31 @@
+The files in this directory are scripts for parsing and processing Lexis-Nexis files, each of which contains many articles. All Lexis-Nexis files to be processed together should initially be placed in the same directory. All output will be directed to a new project directory, which must be specified in the first step, and will be created if necessary. All articles will be referenced by a unique case_id, which will be automatically assigned.
+Use -h with any script to get more information.
+e.g. python parse_LN_to_JSON.py -h
+
+The general work flow is as follows:
+
+1. parse_LN_to_JSON.py takes a directory of Lexis-Nexis text files (LN_dir), splits them into individual articles, and outputs those articles as both text files (unmodified) and JSON files (parsed into sections) into text/ and json/ subfolders, respectively, of the given output directory (project_dir), named using the specified output prefix (output_prefix).
+e.g. > python parse_LN_to_JSON.py LN_dir project_dir output_prefix
+
+Optional:
+1a. find_duplicates.py reads all of the json files looking for similar articles and outputs a list of duplicates in both csv and json format.
+e.g. > python find_duplicates.py project_dir
+
+Optional
+1b. create_sample.py assigns all of the files in the project to groups of a fixed size, each of which is made up of sub-groups, also of a fixed size. Both of these sizes can be adjusted using input arguments. If find_duplicates.py has been run, this script will avoid including multiple copies of duplicate files. Note that this script does not actually copy the files anywhere; it just assignes each article to a group, and outputs this information as a csv and json file. These will be used by make_csv.py and shorten_articles.py (see below).
+e.g. > python create_sample.py project_dir -s 500 -n 100
+
+2. make_csv.py reads all of the json files and outputs a summary to a csv file in the metadata/ subfolder of the project directory, with one row per article. If the -m flag is given (and create_sample.py has been run), this script will also create a directory structure for the samples enumerated in the previous step, along with a csv summary file for each sample. These directories can then be populated by shorten_articles.py (see below).
+e.g. > python make_csv.py project_dir -m
+
+Optional:
+2b. shorten_articles.py creates a new text file for each article, containing just the title and part of the body (up to a specified number of words, rounded up to the nearest paragraph), and places each file in the sample folders enumerated by create_sample.py and created by make_csv.py. 
+e.g. > python shorten_articles.py project_dir -w 375
+
+If all of the above steps are run, the resulting output should include the following:
+project_dir/ 					- new project directory
+project_dir/text/				- one unmodified text file for each article
+project_dir/json/				- one json file for each article (parsed into sections)
+project_dir/metdata/summary.csv	- a structured summary file with one row per article
+project_dir/sample/				- a set of directories with short versions of the samples
+
