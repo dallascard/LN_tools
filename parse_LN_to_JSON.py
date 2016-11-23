@@ -21,8 +21,6 @@ Also, all tags will (usually) be in the form 'TAG: content'
 Unfortunately, there is a lot that can go wrong, including missing sections,
 broken lines, unusually formats, strangely converted characters, 
 and randomly copied text. We do the best we can.
-
-
 """
 
 # import modules
