@@ -342,11 +342,16 @@ usage = '\n%prog input_dir output_dir output_prefix [options]'
 parser = OptionParser(usage=usage)
 parser.add_option("-x", action="store_false", dest="write_files", default=True,
                   help="Set this flag to read the input wihtout writing any output files")
+parser.add_option('--start', dest='start', default=0,
+                  help='First document id: default=%default')
+
 
 # Get options and arguments
 (options, args) = parser.parse_args()
 
-case_id = 0                 # unique id for each article (doc)
+start = int(options.start)
+
+case_id = start                 # unique id for each article (doc)
 total_expected_docs = 0     # total numbe of artcles we expect to get from all L-N files
 total_docs_found = 0        # running count of listed numbers of docs
 
