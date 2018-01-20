@@ -63,7 +63,8 @@ if not path.exists(json_dir):
 
 metadata_dir = project_dir + '/metadata/'
 if not path.exists(metadata_dir):
-    exit("Cannot find metadata directory!")
+    #exit("Cannot find metadata directory!")
+    os.makedirs(metadata_dir)
     
 if options.make_dirs:
 	sample_dir = project_dir + '/partition/'
