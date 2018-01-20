@@ -37,7 +37,7 @@ if len(args) < 1:
 # TODO: Add an option to allow users to add additional tag pairs
 
 TAGS = [(u'COUNTRY', 'UNITED STATES'),
-        (u'GEOGRAPHIC', u'UNITED STATES'),
+        (u'GEOGRAPHIC', u'UNITED STATES')]
 #        (u'SUBJECT', u'GAYS & LESBIANS'),
 #        (u'SUBJECT', u'MARRIAGE'),
 #        (u'SUBJECT', u'SAME SEX MARRIAGE & UNIONS')]
@@ -49,7 +49,7 @@ TAGS = [(u'COUNTRY', 'UNITED STATES'),
 #        (u'SUBJECT', u'IMMIGRATION LAW')]
 #	 (u'SUBJECT', u'CLIMATE CHANGE'),
 #	 (u'SUBJECT', u'GLOBAL WARMING'),
-#	 (u'SUBJECT', u'GREENHOUSE GASES')]
+#	 (u'SUBJECT', u'GREENHOUSE GASES')
 
 #TAGS = [(u'COUNTRY', 'UNITED STATES')]
 
@@ -64,7 +64,7 @@ if not path.exists(json_dir):
 metadata_dir = project_dir + '/metadata/'
 if not path.exists(metadata_dir):
     #exit("Cannot find metadata directory!")
-    makedirs(metadata_dir)
+    akedirs(metadata_dir)
     
 if options.make_dirs:
 	sample_dir = project_dir + '/partition/'
