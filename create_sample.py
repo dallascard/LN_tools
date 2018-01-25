@@ -101,6 +101,7 @@ while i < nCases:
     while (count < sample_size) and (i < nCases):
         # get the case_id associate with the next highest random value
         case_id = case_ids[indices[i]]
+        print(case_id)
         # check to see if it has been excluded because of a duplicate
         if not case_id in exclusion:
             # assign the case to the current sample
