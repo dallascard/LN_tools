@@ -22,8 +22,9 @@ import operator
 
 usage = "\n%prog project_dir [options]"
 parser = OptionParser(usage=usage)
-parser.add_option('-s', help='sample SIZE [default = %default]', metavar='SIZE', default=500)
-parser.add_option('-n', help='secondary sample SIZE [default = %default]', metavar='SIZE', default=100)
+parser.add_option('-s', help='sample SIZE [default = %default]', metavar='sample_size', default=500)
+parser.add_option('-n', help='secondary sample SIZE [default = %default]', metavar='secondary_size', default=100)
+parser.add_option('--start', help='Ignore documents before this number [default = %default]', metavar='SIZE', default=None)
 
 (options, args) = parser.parse_args()
 
@@ -36,9 +37,12 @@ duplicates_file = metadata_dir + 'duplicates.json'
 csv_file_name = metadata_dir + 'sample.csv'
 json_file_name = metadata_dir + 'sample.json'
 	
-sample_size = options.s
-subsample_size = options.n
+sample_size = int(options.sample_size)
+subsample_size = int(options.secondary_size)
 nSubsamples = int(sample_size / subsample_size)
+start = options.start
+if start is not None:
+    start = int(start)
 
 # read in the JSON file and unpack it
 input_file = codecs.open(duplicates_file, encoding='utf-8')
@@ -54,6 +58,7 @@ duplicates = {}         # a dictionary of duplicates indexed by case id
 case_ids = []
 keys = doc.keys()
 for k in keys:
+    print(k)
     case_ids.append(int(k))
 
 # for each case, get the year and duplicates
