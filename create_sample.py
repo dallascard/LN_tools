@@ -98,9 +98,6 @@ secondary_by_case = {}
 p = init_folder
 i = 0
 
-if start > 1:
-
-
 while i < nCases:
     count = 0
     # keep going until we have the desired number of samples
