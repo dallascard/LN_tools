@@ -25,6 +25,7 @@ parser = OptionParser(usage=usage)
 parser.add_option('-s', help='sample SIZE [default = %default]', metavar='sample_size', default=500)
 parser.add_option('-n', help='secondary sample SIZE [default = %default]', metavar='secondary_size', default=100)
 parser.add_option('-f', help='Ignore documents before this number [default = %default]', metavar='start', default=None)
+parser.add_option('-i', help='Initial folder number [default = %default]', metavar='init', default=1)
 
 (options, args) = parser.parse_args()
 
@@ -43,6 +44,7 @@ nSubsamples = int(sample_size / subsample_size)
 start = options.f
 if start is not None:
     start = int(start)
+init_folder = int(options.i)
 
 # read in the JSON file and unpack it
 input_file = codecs.open(duplicates_file, encoding='utf-8')
@@ -90,7 +92,7 @@ sample = {}
 primary_by_case = {}
 secondary_by_case = {}
 
-p = 1
+p = init_folder
 i = 0
 
 while i < nCases:
