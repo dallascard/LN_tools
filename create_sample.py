@@ -58,8 +58,8 @@ duplicates = {}         # a dictionary of duplicates indexed by case id
 case_ids = []
 keys = doc.keys()
 for k in keys:
-    print(k)
-    case_ids.append(int(k))
+    if k >= start:
+        case_ids.append(int(k))
 
 # for each case, get the year and duplicates
 nCases = len(case_ids)
