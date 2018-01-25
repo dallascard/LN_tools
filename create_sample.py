@@ -79,8 +79,11 @@ for c in case_ids:
     else:
         cases_by_year[year] = [c]
 
+if start > 1:
+    exclusion = set([range(start-1)])
+else:
+    exclusion = set()               # establish a set for cases to exclude
 
-exclusion = set()               # establish a set for cases to exclude
 sample_size = int(options.s)    # get the desired sample size from the options
 
 # get a random array of values of the same length as the list of ids
@@ -94,6 +97,9 @@ secondary_by_case = {}
 
 p = init_folder
 i = 0
+
+if start > 1:
+
 
 while i < nCases:
     count = 0
