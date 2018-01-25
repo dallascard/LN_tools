@@ -79,10 +79,7 @@ for c in case_ids:
     else:
         cases_by_year[year] = [c]
 
-if start > 1:
-    exclusion = set(range(start-1))
-else:
-    exclusion = set()               # establish a set for cases to exclude
+exclusion = set()               # establish a set for cases to exclude
 
 sample_size = int(options.s)    # get the desired sample size from the options
 
@@ -98,18 +95,27 @@ secondary_by_case = {}
 p = init_folder
 i = 0
 
+# begin by excluding new articles that are duplicates with old articles
+while i < nCases:
+    # get the case_id associate with the next highest random value
+    case_id = case_ids[indices[i]]
+    # check for duplicates associated with this case id
+    if duplicates.has_key(case_id):
+        # if there are any, add them to the exclusion set
+        for d in duplicates[case_id]:
+            if int(d) < start:
+                exclusion.add(case_id)
+
 while i < nCases:
     count = 0
     # keep going until we have the desired number of samples
     while (count < sample_size) and (i < nCases):
         # get the case_id associate with the next highest random value
         case_id = case_ids[indices[i]]
-        print(case_id)
         # check to see if it has been excluded because of a duplicate
         if not case_id in exclusion:
             # assign the case to the current sample
             sample[case_id] = (p, (count % nSubsamples) + 1)
-
             # increase the count by one
             count += 1
             # check for duplicates associated with this case id
