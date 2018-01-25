@@ -80,7 +80,7 @@ for c in case_ids:
         cases_by_year[year] = [c]
 
 if start > 1:
-    exclusion = set([range(start-1)])
+    exclusion = set(range(start-1))
 else:
     exclusion = set()               # establish a set for cases to exclude
 
