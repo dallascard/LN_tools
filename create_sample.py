@@ -96,10 +96,10 @@ p = init_folder
 i = 0
 
 # begin by excluding new articles that are duplicates with old articles
+print("Checking for exclusions")
 while i < nCases:
     # get the case_id associate with the next highest random value
     case_id = case_ids[indices[i]]
-    print(case_id)
     # check for duplicates associated with this case id
     if duplicates.has_key(case_id):
         # if there are any, add them to the exclusion set
@@ -110,13 +110,13 @@ while i < nCases:
     i += 1
 
 i = 0
+print("Creating sample")
 while i < nCases:
     count = 0
     # keep going until we have the desired number of samples
     while (count < sample_size) and (i < nCases):
         # get the case_id associate with the next highest random value
         case_id = case_ids[indices[i]]
-        print(case_id)
         # check to see if it has been excluded because of a duplicate
         if not case_id in exclusion:
             # assign the case to the current sample
@@ -132,7 +132,6 @@ while i < nCases:
         # increase the counter
         i += 1
     p += 1
-
     
     # set up the csv file for writing
     csv_file = open(csv_file_name, 'wb')
@@ -153,7 +152,6 @@ while i < nCases:
     output_file = codecs.open(json_file_name, mode='w', encoding='utf-8')
     dump(sample, output_file, ensure_ascii=False, indent=2)
     output_file.close()
-
 
     # keep a count for user feedback
     print "Processed", p, "samples."
