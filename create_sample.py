@@ -24,7 +24,7 @@ usage = "\n%prog project_dir [options]"
 parser = OptionParser(usage=usage)
 parser.add_option('-s', help='sample SIZE [default = %default]', metavar='sample_size', default=500)
 parser.add_option('-n', help='secondary sample SIZE [default = %default]', metavar='secondary_size', default=100)
-parser.add_option('--start', help='Ignore documents before this number [default = %default]', metavar='SIZE', default=None)
+parser.add_option('-f', help='Ignore documents before this number [default = %default]', metavar='start', default=None)
 
 (options, args) = parser.parse_args()
 
@@ -37,10 +37,10 @@ duplicates_file = metadata_dir + 'duplicates.json'
 csv_file_name = metadata_dir + 'sample.csv'
 json_file_name = metadata_dir + 'sample.json'
 	
-sample_size = int(options.sample_size)
-subsample_size = int(options.secondary_size)
+sample_size = int(options.s)
+subsample_size = int(options.n)
 nSubsamples = int(sample_size / subsample_size)
-start = options.start
+start = options.f
 if start is not None:
     start = int(start)
 
