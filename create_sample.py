@@ -107,7 +107,9 @@ while i < nCases:
             if int(d) < start:
                 print("Adding exclusion for", case_id)
                 exclusion.add(case_id)
+    i += 1
 
+i = 0
 while i < nCases:
     count = 0
     # keep going until we have the desired number of samples
