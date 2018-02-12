@@ -59,7 +59,7 @@ def parse_text():
             else:
                 date_line_hash[date_line] = 1
         else:
-            error_file.writeline("Date not found in " + orig_file + str(orig_id) + '\n\n')
+            error_file.writelines("Date not found in " + orig_file + str(orig_id) + '\n\n')
         
         # assign the source and a possible disclaimer based on where we find the date
         if labels[0] != u'DATE':
