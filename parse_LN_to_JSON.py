@@ -431,7 +431,7 @@ def parse_LN_to_JSON(input_dir, output_dir, output_prefix, start=0, write_files=
             if match:   
                 # first, save the article we are currently working on
                 if doc_num > 0:
-                    if options.write_files:
+                    if write_files:
                         # write the original file as a text file, unmodified
                         write_text_file()
                         # also write the (parsed) article as a json object
@@ -558,7 +558,7 @@ def parse_LN_to_JSON(input_dir, output_dir, output_prefix, start=0, write_files=
         # once we reach the end of the file, output the current document    
         # and then go to the next file
         if doc_num > 0:
-            if options.write_files:
+            if write_files:
                 write_text_file()
                 parse_text()
 
