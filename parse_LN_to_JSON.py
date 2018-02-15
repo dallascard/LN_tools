@@ -362,7 +362,7 @@ def main():
     parse_LN_to_JSON(input_dir, output_dir, output_prefix, start, write_files)
 
 
-def parse_LN_to_JSON(input_dir, output_dir, output_prefix, start, write_files)
+def parse_LN_to_JSON(input_dir, output_dir, output_prefix, start, write_files):
 
 
     case_id = start                 # unique id for each article (doc)
