@@ -18,11 +18,14 @@ def main():
     output_dir = args[1]
 
     input_dirs = glob.glob(os.path.join(stanford_dir, '*'))
+    input_dirs.sort()
 
     for d in input_dirs:
         basename = os.path.basename(d)
         print(basename)
-        #parse_LN_to_JSON(input_dir, output_dir, output_prefix, start, write_files)
+        input_dir_d = d
+        output_dir_d = os.path.join(output_dir, basename)
+        parse_LN_to_JSON(input_dir_d, output_dir_d, basename, 0)
 
 
 if __name__ == '__main__':
