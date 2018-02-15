@@ -351,7 +351,7 @@ parser.add_option('--start', dest='start', default=0,
 (options, args) = parser.parse_args()
 input_dir = args[0]
 output_dir = args[1]
-output_prefix = args[2]
+prefix = args[2]
 
 if len(args) < 3:
     exit("Error: please specify all three required input arguments")
