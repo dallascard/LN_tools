@@ -339,228 +339,239 @@ END_TAGS = [u'CATEGORY', u'CHART', u'CITY', u'COMPANY', u'CORRECTION', u'CORRECT
 MONTHS = {u'january':1, u'february':2, u'march':3, u'april':4, u'may':5, u'june':6, u'july':7, u'august':8, u'september':9, u'october':10, u'november':11, u'december':12}
 
 # set up an options parser  
-usage = '\n%prog input_dir output_dir output_prefix [options]'
-parser = OptionParser(usage=usage)
-parser.add_option("-x", action="store_false", dest="write_files", default=True,
-                  help="Set this flag to read the input wihtout writing any output files")
-parser.add_option('--start', dest='start', default=0,
-                  help='First document id: default=%default')
+def main():
+    usage = '\n%prog input_dir output_dir output_prefix [options]'
+    parser = OptionParser(usage=usage)
+    parser.add_option("-x", action="store_false", dest="write_files", default=True,
+                      help="Set this flag to read the input wihtout writing any output files")
+    parser.add_option('--start', dest='start', default=0,
+                      help='First document id: default=%default')
 
 
-# Get options and arguments
-(options, args) = parser.parse_args()
+    # Get options and arguments
+    (options, args) = parser.parse_args()
+    input_dir = args[0]
+    output_dir = args[1]
+    output_prefix = args[2]
 
-start = int(options.start)
+    if len(args) < 3:
+        exit("Error: please specify all three required input arguments")
 
-case_id = start                 # unique id for each article (doc)
-total_expected_docs = 0     # total numbe of artcles we expect to get from all L-N files
-total_docs_found = 0        # running count of listed numbers of docs
+    start = int(options.start)
+    write_files = options.write_files
+    parse_LN_to_JSON(input_dir, output_dir, output_prefix, start, write_files)
 
-tag_counts = {}             # counts of how many times we see each tag
-first_tag_counts = {}       # counts of how any times we see each tag as the first tag
 
-# Make sure we got three input arguments
-if len(args) < 3:
-	exit("Error: please specify all three required input arguments")
-	
-input_dir = args[0]
-output_dir = args[1]
-prefix = args[2]
-json_dir = output_dir + '/json/'
-text_dir = output_dir + '/text/'
+def parse_LN_to_JSON(input_dir, output_dir, output_prefix, start, write_files)
 
-if not path.exists(output_dir):
-	makedirs(output_dir)
-	
-if not path.exists(json_dir):
-	makedirs(json_dir)
-	
-if not path.exists(text_dir):
-	makedirs(text_dir)
 
-error_file = codecs.open(output_dir + '/errors.txt', mode='w', encoding='utf-8') 
-    
-# get a list of files to parse, either a single file, or all files in a directory
-files = []
-if path.exists(input_dir):
-	files = glob.glob(input_dir + '/*')
-else:
-	exit("Error: Input directory not found.")
-	            
-print "Found", len(files), "files."
+    case_id = start                 # unique id for each article (doc)
+    total_expected_docs = 0     # total numbe of artcles we expect to get from all L-N files
+    total_docs_found = 0        # running count of listed numbers of docs
 
-# sort the files and parse them one by one
-files.sort()
-for f in files:
-    # open the next file, and read it in 
-    input_file_name = f
-    name_parts = input_file_name.split('/')
-    orig_file_name = name_parts[-1]
-    # open with utf-8-sig encoding to eat the unicode label
-    input_file = codecs.open(input_file_name, encoding='utf-8-sig')
-    input_text = input_file.read()
-    input_file.close()
+    tag_counts = {}             # counts of how many times we see each tag
+    first_tag_counts = {}       # counts of how any times we see each tag as the first tag
 
-    # split the text into individual lines
-    lines = input_text.split('\r\n')
+    # Make sure we got three input arguments
+    	
+    json_dir = output_dir + '/json/'
+    text_dir = output_dir + '/text/'
 
-    doc = {}            # store the article we are working on as a dictionary
-    doc_count = 0       # count of how many articles we have found
-    doc_num = 0         # document number in the original L-N file
-    expected_docs = 0   # the number of articles we expect to find in this L-N file
+    if not path.exists(output_dir):
+    	makedirs(output_dir)
+    	
+    if not path.exists(json_dir):
+    	makedirs(json_dir)
+    	
+    if not path.exists(text_dir):
+    	makedirs(text_dir)
 
-    # process each line, one at a time
-    for line in lines:
-        # first, normalize the unicode (to get rid of things like \xa0)
-        orig_line = line
-        line = normalize('NFKD', line)     
+    error_file = codecs.open(output_dir + '/errors.txt', mode='w', encoding='utf-8') 
         
-        # start off looking for new document (each of which is marked as below)
-        # also, store the numbers from this pattern as groups for use below
-        match = re.search(u'([0-9]+) of ([0-9]+) DOCUMENTS', line)
-        
-        # if we find a new article
-        if match:   
-            # first, save the article we are currently working on
-            if doc_num > 0:
-                if options.write_files:
-                    # write the original file as a text file, unmodified
-                    write_text_file()
-                    # also write the (parsed) article as a json object
-                    parse_text()
+    # get a list of files to parse, either a single file, or all files in a directory
+    files = []
+    if path.exists(input_dir):
+    	files = glob.glob(input_dir + '/*')
+    else:
+    	exit("Error: Input directory not found.")
+    	            
+    print "Found", len(files), "files."
+
+    # sort the files and parse them one by one
+    files.sort()
+    for f in files:
+        # open the next file, and read it in 
+        input_file_name = f
+        name_parts = input_file_name.split('/')
+        orig_file_name = name_parts[-1]
+        # open with utf-8-sig encoding to eat the unicode label
+        input_file = codecs.open(input_file_name, encoding='utf-8-sig')
+        input_text = input_file.read()
+        input_file.close()
+
+        # split the text into individual lines
+        lines = input_text.split('\r\n')
+
+        doc = {}            # store the article we are working on as a dictionary
+        doc_count = 0       # count of how many articles we have found
+        doc_num = 0         # document number in the original L-N file
+        expected_docs = 0   # the number of articles we expect to find in this L-N file
+
+        # process each line, one at a time
+        for line in lines:
+            # first, normalize the unicode (to get rid of things like \xa0)
+            orig_line = line
+            line = normalize('NFKD', line)     
+            
+            # start off looking for new document (each of which is marked as below)
+            # also, store the numbers from this pattern as groups for use below
+            match = re.search(u'([0-9]+) of ([0-9]+) DOCUMENTS', line)
+            
+            # if we find a new article
+            if match:   
+                # first, save the article we are currently working on
+                if doc_num > 0:
+                    if options.write_files:
+                        # write the original file as a text file, unmodified
+                        write_text_file()
+                        # also write the (parsed) article as a json object
+                        parse_text()
+                    
+                # now move on to the new artcle
+                # check to see if the document numbering within the L-N file is consisent  
+                # (i.e. the next document should be numbered one higher than the last)
+                if int(match.group(1)) != doc_num + 1:
+                    message = u'Missed document after ' + input_file_name + u' ' + str(doc_num)
+                    print message
+                    error_file.writelines(message + u'\n\n')
                 
-            # now move on to the new artcle
-            # check to see if the document numbering within the L-N file is consisent  
-            # (i.e. the next document should be numbered one higher than the last)
-            if int(match.group(1)) != doc_num + 1:
-                message = u'Missed document after ' + input_file_name + u' ' + str(doc_num)
-                print message
-                error_file.writelines(message + u'\n\n')
-            
-            # if this is the first article in the L-N file, get the expected number of docs
-            if expected_docs == 0:
-                expected_docs = int(match.group(2))
-                total_expected_docs += expected_docs
-            elif (expected_docs != int(match.group(2))):
-                message = u'Discrepant document counts after ' + input_file_name + u' ' + str(doc_num-1)
-                print message
-                error_file.writelines(message + u'\n\n')
+                # if this is the first article in the L-N file, get the expected number of docs
+                if expected_docs == 0:
+                    expected_docs = int(match.group(2))
+                    total_expected_docs += expected_docs
+                elif (expected_docs != int(match.group(2))):
+                    message = u'Discrepant document counts after ' + input_file_name + u' ' + str(doc_num-1)
+                    print message
+                    error_file.writelines(message + u'\n\n')
 
-            # get the document number from the original L-N file
-            doc_num = int(match.group(1))
-            # assign a new, unique, case id
-            case_id += 1
-            # add one to the number of documents we've seen
-            doc_count += 1
+                # get the document number from the original L-N file
+                doc_num = int(match.group(1))
+                # assign a new, unique, case id
+                case_id += 1
+                # add one to the number of documents we've seen
+                doc_count += 1
 
-            # start a new document as a dictionary
-            doc = {}
-            # store what we know so far
-            doc[u'CASE_ID'] = case_id               # unique identifier
-            doc[u'ORIG_FILE'] = orig_file_name      # filename of the original L-N file
-            doc[u'ORIG_ID'] = doc_num               # document number in the L-N file
-            
-            text = []
-            labels = []
-            output_text = []    # a list of lines to write to the text file
-            
-            current = u''       # current stores the block we are currently working on
-            label = u'UNKNOWN'
-            
-        # if we didn't find a new article, label each line with our best guess
-        elif (doc_num > 0):   
-        
-            match = False
-            
-            # check if thee's anything on this line
-            if (line != u''):
-                # if so, strip the whitespace and add the current line to our working line
-                temp = line.lstrip()
-                temp = temp.rstrip()
-                current += temp + ' '
+                # start a new document as a dictionary
+                doc = {}
+                # store what we know so far
+                doc[u'CASE_ID'] = case_id               # unique identifier
+                doc[u'ORIG_FILE'] = orig_file_name      # filename of the original L-N file
+                doc[u'ORIG_ID'] = doc_num               # document number in the L-N file
                 
-            # if not, label the line(s) we've been working on...
-            elif (current != u''):
-                current = current.rstrip()
-                                
-                # first check to see if this looks like a tag
-                tag_match = re.search(u'^([A-Z]+[-]?[A-Z]+):', current)                
-                if tag_match:
-                    tag = tag_match.group(1)  
-                    if (tag in TOP_TAGS):
-                        label = tag
-                    elif (tag in END_TAGS):
-                        label = tag
-
-				# then check to see if it could be the copyright line
-                copyright_match = re.search(u'^Copyright ', current)                       
-                if label == u'UNKNOWN' and copyright_match:
-                    label = u'COPYRIGHT'
-
-				# check if it could be a date (if we don't already have one)
-                if label == u'UNKNOWN' and not doc.has_key(u'DATE'):
-                	# Dates appear in two different patterns (with and without day)
-                    date_match = re.search('([a-zA-Z]*).?\s*(\d\d?).*\s*(\d\d\d\d).*', current)
-                    month_yyyy_match = re.search('([a-zA-Z]*).?\s*(\d\d\d\d).*', current)
-
-					# if we find a pattern, parse it and assign details to the doc
-                    if date_match:
-                        month_name = date_match.group(1)
-                        month_name = month_name.lower()
-                        day = date_match.group(2)
-                        year = date_match.group(3)
-                        if MONTHS.has_key(month_name):
-                            month = MONTHS[month_name]
-                            doc[u'DATE'] = current
-                            doc[u'MONTH'] = int(month)
-                            doc[u'DAY'] = int(day)
-                            doc[u'YEAR'] = int(year)        
-                            # also store the date in the format YYYYMMDD
-                            fulldate = year + str(month).zfill(2) + day.zfill(2)
-                            doc[u'FULLDATE'] = fulldate
-                            label = u'DATE'
-
-                    elif month_yyyy_match:
-                        month_name = month_yyyy_match.group(1)
-                        month_name = month_name.lower()
-                        year = month_yyyy_match.group(2)
-                        if MONTHS.has_key(month_name):
-                            doc[u'DATE'] = current
-                            month = MONTHS[month_name]
-                            doc[u'MONTH'] = int(month)
-                            doc[u'DAY'] = 0
-                            doc[u'YEAR'] = int(year)
-                            doc[u'FULLDATE'] = fulldate
-                            label = u'DATE'
-
-				# append this line to text for this doc
-                text.append(current)
-                # provide the best guess for its label
-                labels.append(label)
-                 
-                # start a new working line
-                current = u''
+                text = []
+                labels = []
+                output_text = []    # a list of lines to write to the text file
+                
+                current = u''       # current stores the block we are currently working on
                 label = u'UNKNOWN'
+                
+            # if we didn't find a new article, label each line with our best guess
+            elif (doc_num > 0):   
+            
+                match = False
+                
+                # check if thee's anything on this line
+                if (line != u''):
+                    # if so, strip the whitespace and add the current line to our working line
+                    temp = line.lstrip()
+                    temp = temp.rstrip()
+                    current += temp + ' '
+                    
+                # if not, label the line(s) we've been working on...
+                elif (current != u''):
+                    current = current.rstrip()
+                                    
+                    # first check to see if this looks like a tag
+                    tag_match = re.search(u'^([A-Z]+[-]?[A-Z]+):', current)                
+                    if tag_match:
+                        tag = tag_match.group(1)  
+                        if (tag in TOP_TAGS):
+                            label = tag
+                        elif (tag in END_TAGS):
+                            label = tag
 
-			# append the line, unchanged, to another copy of the document
-            output_text.append(orig_line + u'\r\n')
-        
-    total_docs_found += doc_count
+    				# then check to see if it could be the copyright line
+                    copyright_match = re.search(u'^Copyright ', current)                       
+                    if label == u'UNKNOWN' and copyright_match:
+                        label = u'COPYRIGHT'
 
-    # once we reach the end of the file, output the current document    
-    # and then go to the next file
-    if doc_num > 0:
-        if options.write_files:
-            write_text_file()
-            parse_text()
+    				# check if it could be a date (if we don't already have one)
+                    if label == u'UNKNOWN' and not doc.has_key(u'DATE'):
+                    	# Dates appear in two different patterns (with and without day)
+                        date_match = re.search('([a-zA-Z]*).?\s*(\d\d?).*\s*(\d\d\d\d).*', current)
+                        month_yyyy_match = re.search('([a-zA-Z]*).?\s*(\d\d\d\d).*', current)
 
-    # print a summary for the L-N file
-    print 'Processed', orig_file_name + ': ', 'Expected:', expected_docs, '  Found:', doc_count
+    					# if we find a pattern, parse it and assign details to the doc
+                        if date_match:
+                            month_name = date_match.group(1)
+                            month_name = month_name.lower()
+                            day = date_match.group(2)
+                            year = date_match.group(3)
+                            if MONTHS.has_key(month_name):
+                                month = MONTHS[month_name]
+                                doc[u'DATE'] = current
+                                doc[u'MONTH'] = int(month)
+                                doc[u'DAY'] = int(day)
+                                doc[u'YEAR'] = int(year)        
+                                # also store the date in the format YYYYMMDD
+                                fulldate = year + str(month).zfill(2) + day.zfill(2)
+                                doc[u'FULLDATE'] = fulldate
+                                label = u'DATE'
 
-# and print a final summary of everything
-print 'Total number of documents expected: ' + str(total_expected_docs)
-print 'Total number of documents found: ' + str(total_docs_found)
+                        elif month_yyyy_match:
+                            month_name = month_yyyy_match.group(1)
+                            month_name = month_name.lower()
+                            year = month_yyyy_match.group(2)
+                            if MONTHS.has_key(month_name):
+                                doc[u'DATE'] = current
+                                month = MONTHS[month_name]
+                                doc[u'MONTH'] = int(month)
+                                doc[u'DAY'] = 0
+                                doc[u'YEAR'] = int(year)
+                                doc[u'FULLDATE'] = fulldate
+                                label = u'DATE'
 
-error_file.close()
-run_checks()
+    				# append this line to text for this doc
+                    text.append(current)
+                    # provide the best guess for its label
+                    labels.append(label)
+                     
+                    # start a new working line
+                    current = u''
+                    label = u'UNKNOWN'
 
+    			# append the line, unchanged, to another copy of the document
+                output_text.append(orig_line + u'\r\n')
+            
+        total_docs_found += doc_count
+
+        # once we reach the end of the file, output the current document    
+        # and then go to the next file
+        if doc_num > 0:
+            if options.write_files:
+                write_text_file()
+                parse_text()
+
+        # print a summary for the L-N file
+        print 'Processed', orig_file_name + ': ', 'Expected:', expected_docs, '  Found:', doc_count
+
+    # and print a final summary of everything
+    print 'Total number of documents expected: ' + str(total_expected_docs)
+    print 'Total number of documents found: ' + str(total_docs_found)
+
+    error_file.close()
+    run_checks()
+
+
+if __name__ == '__main__':
+    main()
