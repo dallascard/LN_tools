@@ -1,9 +1,8 @@
 import os
 import glob
+import subprocess
 
 from optparse import OptionParser
-
-from parse_LN_to_JSON import parse_LN_to_JSON
 
 def main():
     usage = "%prog stanford_dir output_dir"
@@ -25,7 +24,7 @@ def main():
         print(basename)
         input_dir_d = d
         output_dir_d = os.path.join(output_dir, basename)
-        parse_LN_to_JSON(input_dir_d, output_dir_d, basename, 0)
+        subprocess.call(["python", "parse_LN_to_JSON.py", input_dir_d, output_dir_d, basename])
 
 
 if __name__ == '__main__':
