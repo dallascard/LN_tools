@@ -3,7 +3,6 @@ import glob
 
 from optparse import OptionParser
 
-import file_handling as fh
 from parse_LN_to_JSON import parse_LN_to_JSON
 
 def main():
