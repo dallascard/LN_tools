@@ -21,10 +21,11 @@ def main():
 
     for d in input_dirs:
         basename = os.path.basename(d)
+        basename = re.sub(r'\s', '_', basename)
         print(basename)
         input_dir_d = d
         output_dir_d = os.path.join(output_dir, basename)
-        subprocess.call(["python", "parse_LN_to_JSON.py", input_dir_d, output_dir_d, basename])
+        subprocess.call(["python", "parse_LN_to_JSON.py", input_dir_d, output_dir_d, basename + '-'])
 
 
 if __name__ == '__main__':
