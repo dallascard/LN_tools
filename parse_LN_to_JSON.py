@@ -421,7 +421,7 @@ for f in files:
         
         # start off looking for new document (each of which is marked as below)
         # also, store the numbers from this pattern as groups for use below
-        match = re.search(u'([0-9]+) of ([0-9]+) DOCUMENTS', line)
+        match = re.search(u'([0-9]+) of ([0-9]+) DOCUMENT', line)
         
         # if we find a new article
         if match:   
