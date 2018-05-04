@@ -34,9 +34,12 @@ import re
 import glob
 
 # This function writes an individual article to a text file, unchanged
-def write_text_file():
+def write_text_file(append_date=False):
     if doc.has_key(u'CASE_ID'):
-        output_file_name = text_dir + '/' + prefix + str(doc[u'CASE_ID']) + '.txt'
+        if append_date:
+            output_file_name = text_dir + '/' + prefix + str(doc[u'YEAR']) + '-' + str(doc[u'MONTH']) + '-' + str(doc[u'DAY']) + '_' + str(doc[u'CASE_ID']) + '.txt'
+        else:
+            output_file_name = text_dir + '/' + prefix + str(doc[u'CASE_ID']) + '.txt'
         output_file = codecs.open(output_file_name, mode='w', encoding='utf-8')
         output_file.writelines(output_text)
         output_file.close()
@@ -253,7 +256,7 @@ def parse_text():
             if u'UNKNOWN' in labels:
                 error_file.write("Unknown lines left in " + orig_loc + '\n\n')
             
-            write_json_file()
+            write_json_file(append_date)
             
 
 # This function finds the division between sections in an article
@@ -310,15 +313,16 @@ def run_checks():
 #        print j, vals[i[-j]], keys[i[-j]]
     
 
-
 # This function writes a parsed version of an article as a JSON object
-def write_json_file():
+def write_json_file(append_date=False):
     # assume we have a dictionary named doc
     # it should have a case_id
     if doc.has_key(u'CASE_ID'):
-
+        if append_date:
+            output_file_name = json_dir + '/' + prefix + str(doc[u'YEAR']) + '-' + str(doc[u'MONTH']) + '-' + str(doc[u'DAY']) + '_' + str(doc[u'CASE_ID']) + '.json'
+        else:
+            output_file_name = json_dir + '/' + prefix + str(doc[u'CASE_ID']) + '.json'
         # output the overall dictionary as a json file
-        output_file_name = json_dir + '/' + prefix + str(doc[u'CASE_ID']) + '.json'
         output_file = codecs.open(output_file_name, mode='w', encoding='utf-8')
         dump(doc, output_file, ensure_ascii=False, indent=2)
         output_file.close()
@@ -338,14 +342,16 @@ TOP_TAGS = [u'BYLINE', u'DATELINE', u'HIGHLIGHT', u'LENGTH', u'SECTION', u'SOURC
 END_TAGS = [u'CATEGORY', u'CHART', u'CITY', u'COMPANY', u'CORRECTION', u'CORRECTION-DATE', u'COUNTRY', u'CUTLINE', u'DISTRIBUTION', u'DOCUMENT-TYPE', u'ENHANCEMENT', u'GEOGRAPHIC',  u'GRAPHIC', u'INDUSTRY', u'JOURNAL-CODE', u'LANGUAGE', u'LOAD-DATE', u'NAME', u'NOTES', u'ORGANIZATION', u'PERSON', u'PHOTO', u'PHOTOS', u'PUBLICATION-TYPE', u'SERIES', u'STATE', u'SUBJECT', u'TICKER', u'TYPE', u'URL']
 MONTHS = {u'january':1, u'february':2, u'march':3, u'april':4, u'may':5, u'june':6, u'july':7, u'august':8, u'september':9, u'october':10, u'november':11, u'december':12}
 
+
 # set up an options parser  
 usage = '\n%prog input_dir output_dir output_prefix [options]'
 parser = OptionParser(usage=usage)
 parser.add_option("-x", action="store_false", dest="write_files", default=True,
-                  help="Set this flag to read the input wihtout writing any output files")
+                  help="Set this flag to read the input without writing any output files")
 parser.add_option('--start', dest='start', default=0,
                   help='First document id: default=%default')
-
+parser.add_option("--date", action="store_true", dest="date", default=False,
+                  help="Append date to file name")
 
 # Get options and arguments
 (options, args) = parser.parse_args()
@@ -358,7 +364,7 @@ if len(args) < 3:
 
 start = int(options.start)
 write_files = options.write_files
-
+append_date = options.date
 
 
 case_id = start                 # unique id for each article (doc)
@@ -429,7 +435,7 @@ for f in files:
             if doc_num > 0:
                 if write_files:
                     # write the original file as a text file, unmodified
-                    write_text_file()
+                    write_text_file(append_date)
                     # also write the (parsed) article as a json object
                     parse_text()
                 
@@ -555,7 +561,7 @@ for f in files:
     # and then go to the next file
     if doc_num > 0:
         if write_files:
-            write_text_file()
+            write_text_file(append_date)
             parse_text()
 
     # print a summary for the L-N file
