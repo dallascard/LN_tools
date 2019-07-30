@@ -26,6 +26,7 @@ parser.add_option('-s', help='sample SIZE [default = %default]', metavar='sample
 parser.add_option('-n', help='secondary sample SIZE [default = %default]', metavar='secondary_size', default=100)
 parser.add_option('-f', help='Ignore documents before this number [default = %default]', metavar='start', default=None)
 parser.add_option('-i', help='Initial folder number [default = %default]', metavar='init', default=1)
+parser.add_option('--start-year', help='Ignore documents before this year [default = %default]', default=None)
 
 (options, args) = parser.parse_args()
 
@@ -44,6 +45,9 @@ nSubsamples = int(sample_size / subsample_size)
 start = options.f
 if start is not None:
     start = int(start)
+start_year = options.start_year
+if start_year is not None:
+    start_year = int(start_year)
 init_folder = int(options.i)
 
 # read in the JSON file and unpack it
@@ -60,8 +64,14 @@ duplicates = {}         # a dictionary of duplicates indexed by case id
 case_ids = []
 keys = doc.keys()
 for k in keys:
+    data = doc[k]
+    # year is the first thing in the list
+    year = int(data[0])
     if int(k) >= start:
-        case_ids.append(int(k))
+        if start_year is None:
+            case_ids.append(int(k))
+        elif year >= start_year:
+            case_ids.append(int(k))
 
 # for each case, get the year and duplicates
 nCases = len(case_ids)
@@ -104,7 +114,8 @@ while i < nCases:
     if duplicates.has_key(case_id):
         # if there are any, add them to the exclusion set
         for d in duplicates[case_id]:
-            if int(d) < start:
+            year = case_years[d]
+            if int(d) < start or int(year) < start_year:
                 print("Adding exclusion for", case_id)
                 exclusion.add(case_id)
     i += 1
