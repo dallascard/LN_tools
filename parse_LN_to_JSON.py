@@ -46,7 +46,7 @@ def write_text_file(append_date=False):
 
 
 # This function does the actual parsing into sections
-def parse_text():
+def parse_text(split_paragraphs=False):
         
     if doc.has_key(u'CASE_ID'):
         case_id = doc[u'CASE_ID']
@@ -205,7 +205,10 @@ def parse_text():
                     top_tags[labels[t]] = text[t]
             elif labels[t] == u'BODY':
                 if labels[t-1] != u'BODY':
-                    paragraphs.append(text[t])
+                    if split_paragraphs:
+                        paragraphs.extend(text[t].split('\n\n'))
+                    else:
+                        paragraphs.append(text[t])
                 else:                   
                     # Check to see if we should append this line to the last
                     append = True
@@ -352,6 +355,10 @@ parser.add_option('--start', dest='start', default=0,
                   help='First document id: default=%default')
 parser.add_option("--date", action="store_true", dest="date", default=False,
                   help="Append date to file name")
+parser.add_option("--newline", action="store_true", default=False,
+                  help="Split on \\n instead of \\r\\n")
+parser.add_option("--paragraphs", action="store_true", default=False,
+                  help="Assume that each line is a paragraph (for conversions from .doc)")
 
 # Get options and arguments
 (options, args) = parser.parse_args()
@@ -412,7 +419,10 @@ for f in files:
     input_file.close()
 
     # split the text into individual lines
-    lines = input_text.split('\r\n')
+    if options.newline:
+        lines = input_text.split('\n')
+    else:
+        lines = input_text.split('\r\n')
 
     doc = {}            # store the article we are working on as a dictionary
     doc_count = 0       # count of how many articles we have found
@@ -437,7 +447,7 @@ for f in files:
                     # write the original file as a text file, unmodified
                     write_text_file(append_date)
                     # also write the (parsed) article as a json object
-                    parse_text()
+                    parse_text(split_paragraphs=options.paragraphs)
                 
             # now move on to the new artcle
             # check to see if the document numbering within the L-N file is consisent  
@@ -482,12 +492,15 @@ for f in files:
         
             match = False
             
-            # check if thee's anything on this line
+            # check if there's anything on this line
             if (line != u''):
                 # if so, strip the whitespace and add the current line to our working line
                 temp = line.lstrip()
                 temp = temp.rstrip()
-                current += temp + ' '
+                if options.paragraphs:
+                    current += temp + '\n\n'
+                else:
+                    current += temp + ' '
                 
             # if not, label the line(s) we've been working on...
             elif (current != u''):
@@ -562,7 +575,7 @@ for f in files:
     if doc_num > 0:
         if write_files:
             write_text_file(append_date)
-            parse_text()
+            parse_text(split_paragraphs=options.paragraphs)
 
     # print a summary for the L-N file
     print 'Processed', orig_file_name + ': ', 'Expected:', expected_docs, '  Found:', doc_count
