@@ -434,8 +434,6 @@ for f in files:
         # first, normalize the unicode (to get rid of things like \xa0)
         orig_line = line
         line = normalize('NFKD', line)     
-        
-        print(line_i, line)
 
         # start off looking for new document (each of which is marked as below)
         # also, store the numbers from this pattern as groups for use below
