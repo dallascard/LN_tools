@@ -63,7 +63,7 @@ def parse_text(split_paragraphs=False):
                 date_line_hash[date_line] = 1
         else:
             print(doc)
-            error_file.writelines("Date not found in " + orig_file + str(orig_id) + '\n\n')
+            error_file.writelines("Date not found in " + orig_file + ": " + str(orig_id) + '\n\n')
         
         # assign the source and a possible disclaimer based on where we find the date
         if labels[0] != u'DATE':
@@ -430,11 +430,13 @@ for f in files:
     expected_docs = 0   # the number of articles we expect to find in this L-N file
 
     # process each line, one at a time
-    for line in lines:
+    for line_i, line in enumerate(lines):
         # first, normalize the unicode (to get rid of things like \xa0)
         orig_line = line
         line = normalize('NFKD', line)     
         
+        print(line_i, line)
+
         # start off looking for new document (each of which is marked as below)
         # also, store the numbers from this pattern as groups for use below
         match = re.search(u'([0-9]+) of ([0-9]+) DOCUMENT', line)
