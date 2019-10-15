@@ -84,7 +84,7 @@ def main():
             
             output_file_name = sample_dir + json_prefix + case_id + '_short'+ '.txt'
 
-            shorten_and_save_article(case_id, doc, output_filename, options.t, options.w)
+            shorten_and_save_article(case_id, doc, output_file_name, options.t, options.w)
 
         count += 1
         if (count%1000 == 0):
@@ -93,7 +93,7 @@ def main():
 
 
 
-def shorten_and_save_article(case_id, doc, output_filename, topic_code, max_words):
+def shorten_and_save_article(case_id, doc, output_file_name, topic_code, max_words):
 
     with codecs.open(output_file_name, mode='wU', encoding='utf-8') as output_file:
 
