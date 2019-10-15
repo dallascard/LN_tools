@@ -34,6 +34,7 @@ json_prefix = args[1]
 json_dir = project_dir + '/json/'
 output_dir = project_dir + '/partition/'
 metadata_dir = project_dir + '/metadata/'
+all_short_dir = project_dir + '/all_short/'
 
 if not path.exists(json_dir):
 	exit("Error: json directory not found: " + json_dir)
@@ -63,6 +64,8 @@ for case_id in case_ids:
     if not path.exists(json_filename):
         exit("Cannot find" + json_filename)
     else:
+
+
         # open the json file, read it in, and unpack it
         json_file = codecs.open(json_filename, encoding = 'utf-8')
         json_text = json_file.read()
@@ -75,14 +78,23 @@ for case_id in case_ids:
         sample_dir = output_dir + '/' + str(primary) + '/' + str(secondary) + '/'
         if not path.exists(sample_dir):
             makedirs(sample_dir)
+        
         output_file_name = sample_dir + json_prefix + case_id + '_short'+ '.txt'
-        output_file = codecs.open(output_file_name, mode='wU', encoding='utf-8')
-        
-        
+
+        shorten_and_save_article(case_id, doc, output_filename, options.t, options.w)
+
+    count += 1
+    if (count%1000 == 0):
+        print "Processed", count, "cases."
+
+def shorten_and_save_article(case_id, doc, output_filename, topic_code, max_words):
+
+    with codecs.open(output_file_name, mode='wU', encoding='utf-8') as output_file:
+
         if doc.has_key(u'CASE_ID'):
             assert int(case_id) == int(doc[u'CASE_ID'])
         
-        output_file.writelines(options.t + u'-' + case_id)
+        output_file.writelines(topic_code + u'-' + case_id)
         output_file.write(u'\n\n')
         output_file.writelines("PRIMARY")
         output_file.write(u'\n\n')
@@ -100,7 +112,7 @@ for case_id in case_ids:
             p = 0               # paragarph number
             # go through each paragraph in the body and add it to the output
             # stop when we reach the end of the body, or we have enough words
-            while (word_count < int(options.w)) and (p < len(body)):
+            while (word_count < int(max_words)) and (p < len(body)):
                 # grab the next paragraph
                 paragraph = body[p]
                 # split it into words and count them, nothing fancy
@@ -117,15 +129,4 @@ for case_id in case_ids:
 
             # write our pargraphs to the output
             output_file.writelines(text)
-        
-            # also write the number of words written
-            # line = "Word count: " + str(word_count)
-            # output_file.write(line)
-         
-        # close the output file
-        output_file.close()
-        # keep a count for user feedback
-
-    count += 1
-    if (count%1000 == 0):
-        print "Processed", count, "cases."
+                
