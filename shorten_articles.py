@@ -48,6 +48,10 @@ def main():
     if not path.exists(output_dir):
     	exit("Error: sample dir not found. Please run make_csv.py -s")
 
+    if not path.exists(all_short_dir):
+        os.makedirs(all_short_dir)
+
+    print("Saving sample")
     sample_file = metadata_dir + 'sample.json'
 
     # read in the JSON file and unpack it
@@ -67,8 +71,6 @@ def main():
         if not path.exists(json_filename):
             exit("Cannot find" + json_filename)
         else:
-
-
             # open the json file, read it in, and unpack it
             json_file = codecs.open(json_filename, encoding = 'utf-8')
             json_text = json_file.read()
@@ -83,7 +85,6 @@ def main():
                 makedirs(sample_dir)
             
             output_file_name = sample_dir + json_prefix + case_id + '_short'+ '.txt'
-
             shorten_and_save_article(case_id, doc, output_file_name, options.t, options.w)
 
         count += 1
@@ -91,6 +92,27 @@ def main():
             print "Processed", count, "cases."
 
 
+    print("Saving all")
+    infile = metadata_dir + 'sample.csv'
+    with open(infile) as f:
+        lines = f.readlines()
+
+    for line in lines:
+        case_id = line.split(',')[0]
+        json_filename = json_dir + '/' + json_prefix + case_id + '.json'
+
+        # open the json file, read it in, and unpack it
+        json_file = codecs.open(json_filename, encoding = 'utf-8')
+        json_text = json_file.read()
+        json_file.close()
+        doc = loads(json_text, encoding='utf-8')
+
+        output_file_name = all_short_dir + json_prefix + case_id + '_short'+ '.txt'
+        shorten_and_save_article(case_id, doc, output_file_name, options.t, options.w)
+
+        count += 1
+        if (count%1000 == 0):
+            print "Processed", count, "cases."
 
 
 def shorten_and_save_article(case_id, doc, output_file_name, topic_code, max_words):
