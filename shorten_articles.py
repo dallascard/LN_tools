@@ -11,6 +11,7 @@ The json files to be converted come from parse_LN_to_JSON.py
 """
 
 # import modules
+import os
 from os import path, makedirs
 from optparse import OptionParser
 from json import loads
