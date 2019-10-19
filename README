@@ -2,6 +2,19 @@ The files in this directory are scripts for parsing and processing Lexis-Nexis f
 Use -h with any script to get more information.
 e.g. python parse_LN_to_JSON.py -h
 
+Pre-processing:
+===============
+If you have files in Word format, you must first convert them to text format. Here is a step-by-step guide. For each .doc file:
+1. Open the file in Word.
+2. If the first page starts with "Note:", delete everything on that first page. (The next page should start with "1 of <XXX> documents".)
+3. Use "Save As" to save it as a Plain Text (.txt) file (same name prefix is fine).
+4. A "File Conversion" window should open up. Select "Other Encoding", and then select "Unicode 7.0 UTF-8" as the encoding.
+5. For "End lines with:" select "CR / LF"
+6. Leave everything else as is, and click "Okay"
+7. Ideally, every paragraph should become a line. Use the "--paragraphs" options in parse_LN_to_JSON.py (see below).
+8. Note that sometimes the expected number of documents will be a bit messed up because it doesn't take into account the splitting into chunks of 500.
+
+
 The general work flow is as follows:
 
 1. parse_LN_to_JSON.py takes a directory of Lexis-Nexis text files (LN_dir), splits them into individual articles, and outputs those articles as both text files (unmodified) and JSON files (parsed into sections) into text/ and json/ subfolders, respectively, of the given output directory (project_dir), named using the specified output prefix (output_prefix).
