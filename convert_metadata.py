@@ -34,6 +34,8 @@ def main():
                     if source not in SOURCES:
                         if source.startswith('washington post blogs'):
                             source = 'washington post'
+                        elif source.startswith('new york times'):
+                            source = 'new york times'
                         else:
                             raise Exception("Source not found:" + source)
                     else:
