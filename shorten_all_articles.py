@@ -45,36 +45,16 @@ def main():
         os.makedirs(all_short_dir)
 
     files = glob.glob(json_dir + '*.json')
-
-    count = 0
-    # go through each row in the json file
-    for json_filename in files:
-        # find the associated json file
-        #json_filename = json_dir + '/' + json_prefix + case_id + '.json'
-        if not path.exists(json_filename):
-            exit("Cannot find" + json_filename)
-        else:
-            # open the json file, read it in, and unpack it
-            json_file = codecs.open(json_filename, encoding = 'utf-8')
-            json_text = json_file.read()
-            json_file.close()
-            doc = loads(json_text, encoding='utf-8')
-            
-            shorten_and_save_article(case_id, doc, output_file_name, options.t, options.w)
-
-        count += 1
-        if (count%1000 == 0):
-            print "Processed", count, "cases."
-
+    files.sort()
 
     print("Saving all")
-    infile = metadata_dir + 'sample.csv'
-    with open(infile) as f:
-        lines = f.readlines()
 
-    for line in lines:
-        case_id = line.split(',')[0]
-        json_filename = json_dir + '/' + json_prefix + case_id + '.json'
+    for json_filename in files:
+        #json_filename = json_dir + '/' + json_prefix + case_id + '.json'
+        basename = os.path.basename(json_filename)
+        prefix = os.path.splitext(basename)[0]
+        parts = prefix.split('_')
+        case_id = parts[-1]
 
         # open the json file, read it in, and unpack it
         json_file = codecs.open(json_filename, encoding = 'utf-8')
