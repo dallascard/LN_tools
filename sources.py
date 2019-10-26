@@ -91,5 +91,7 @@ SOURCES = {"san jose mercury news (california)":"san jose mercury news",
   "new york times blogs (op-talk)": "new york times",
   "new york times blogs (times insider)": "new york times",
   "new york times blogs (united nations general assembly)": "new york times",
-  "new york times blogs (the new york times news minute)": "new york times"
+  "new york times blogs (the new york times news minute)": "new york times",
+  "the atlanta journal-constitution": "atlanta journal and constitution",
+  "palm beach post (florida) florida)": "palm beach post"
   }

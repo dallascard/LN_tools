@@ -32,8 +32,14 @@ def main():
                     key = os.path.splitext(filename)[0]
                     source = row[4]
                     if source not in SOURCES:
-                        raise Exception("Source not found:" + source)
-                    source = SOURCES[source]
+                        if source.startswith('washington post blogs'):
+                            source = 'washington post'
+                        elif source.startswith('new york times'):
+                            source = 'new york times'
+                        else:
+                            raise Exception("Source not found:" + source)
+                    else:
+                        source = SOURCES[source]
                     if source not in sources_found:
                         sources_found.add(source)
                     year = int(row[5])
