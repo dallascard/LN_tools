@@ -54,7 +54,7 @@ def main():
         #json_filename = json_dir + '/' + json_prefix + case_id + '.json'
         basename = os.path.basename(json_filename)
         prefix = os.path.splitext(basename)[0]
-        case_id = prefix[len(file_prefix):]
+        case_id = prefix[len(json_prefix):]
 
         # open the json file, read it in, and unpack it
         json_file = codecs.open(json_filename, encoding = 'utf-8')
